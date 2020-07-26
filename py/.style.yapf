@@ -1,0 +1,11 @@
+[style]
+arithmetic_precedence_indication = true
+based_on_style = pep8
+coalesce_brackets = true
+column_limit=120
+join_multiple_lines = true
+spaces_before_comment = 4
+spaces_before_comment = true
+split_all_top_level_comma_separated_values = true
+split_before_logical_operator = true
+split_complex_comprehension = true
