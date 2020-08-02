@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
-# Arch Linux Install Script (alis) installs unattended, automated
-# and customized Arch Linux system.
-# Copyright (C) 2018 picodotdev
+# Arch Linux Install Script (alis) installs unattended, automated and customized Arch Linux system.
+
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
