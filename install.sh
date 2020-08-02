@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-# Arch Linux Install Script (alis) installs unattended, automated and customized Arch Linux system.
+# Arch Linux Install Script installs unattended, automated and customized Arch Linux system.
 
 
 # This program is free software: you can redistribute it and/or modify
@@ -19,8 +19,8 @@ set -e
 
 # Usage:
 # # loadkeys en
-# # vim alis.conf
-# # ./alis.sh
+# # vim install.conf
+# # ./install.sh
 
 # global variables (no configuration, don't edit)
 ASCIINEMA=""
@@ -50,10 +50,10 @@ VIRTUALBOX=""
 CMDLINE_LINUX_ROOT=""
 CMDLINE_LINUX=""
 
-CONF_FILE="alis.conf"
-GLOBALS_FILE="alis-globals.conf"
-LOG_FILE="alis.log"
-ASCIINEMA_FILE="alis.asciinema"
+CONF_FILE="install.conf"
+GLOBALS_FILE="install-globals.conf"
+LOG_FILE="install.log"
+ASCIINEMA_FILE="install.asciinema"
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -61,7 +61,7 @@ LIGHT_BLUE='\033[1;34m'
 NC='\033[0m'
 
 function configuration_install() {
-    source alis.conf
+    source "$CONF_FILE"
 }
 
 function sanitize_variables() {
@@ -143,7 +143,7 @@ function check_variables() {
     check_variables_value "HOOKS" "$HOOKS"
     check_variables_list "BOOTLOADER" "$BOOTLOADER" "grub refind systemd"
     check_variables_list "AUR" "$AUR" "aurman yay" "false"
-    check_variables_list "DESKTOP_ENVIRONMENT" "$DESKTOP_ENVIRONMENT" "gnome kde xfce mate cinnamon lxde" "false"
+    check_variables_list "DESKTOP_ENVIRONMENT" "$DESKTOP_ENVIRONMENT" "dotfiles gnome" "false"
     check_variables_list "DISPLAY_DRIVER" "$DISPLAY_DRIVER" "intel amdgpu ati nvidia nvidia-lts nvidia-dkms nvidia-390xx nvidia-390xx-lts nvidia-390xx-dkms nouveau" "false"
     check_variables_boolean "KMS" "$KMS"
     check_variables_boolean "DISPLAY_DRIVER_DDX" "$DISPLAY_DRIVER_DDX"
@@ -286,7 +286,8 @@ function prepare() {
 
     configure_time
     prepare_partition
-    #configure_network
+    # TODO: fix configure_network
+    #configure_network 
 
     pacman -Sy
 }
@@ -614,6 +615,8 @@ EOT
     fi
 
     printf "$ROOT_PASSWORD\n$ROOT_PASSWORD" | arch-chroot /mnt passwd
+
+    
 }
 
 function mkinitcpio_configuration() {
@@ -883,7 +886,7 @@ function bootloader_grub() {
     arch-chroot /mnt sed -i -E 's/GRUB_CMDLINE_LINUX_DEFAULT="(.*) quiet"/GRUB_CMDLINE_LINUX_DEFAULT="\1"/' /etc/default/grub
     arch-chroot /mnt sed -i 's/GRUB_CMDLINE_LINUX=""/GRUB_CMDLINE_LINUX="'"$CMDLINE_LINUX"'"/' /etc/default/grub
     echo "" >> /mnt/etc/default/grub
-    echo "# alis" >> /mnt/etc/default/grub
+    echo "# install" >> /mnt/etc/default/grub
     echo "GRUB_DISABLE_SUBMENU=y" >> /mnt/etc/default/grub
 
     if [ "$BIOS_TYPE" == "uefi" ]; then
@@ -923,7 +926,7 @@ function bootloader_refind() {
     fi
 
     cat <<EOT >> "/mnt$ESP_DIRECTORY/EFI/refind/refind.conf"
-# alis
+# install
 menuentry "Arch Linux" {
     volume   $PARTUUID_BOOT
     loader   /vmlinuz-linux
@@ -1007,7 +1010,7 @@ function bootloader_systemd() {
     arch-chroot /mnt mkdir -p "$ESP_DIRECTORY/loader/entries/"
 
     cat <<EOT > "/mnt$ESP_DIRECTORY/loader/loader.conf"
-# alis
+# install
 timeout 5
 default archlinux
 editor 0
@@ -1231,27 +1234,20 @@ function desktop_environment() {
     pacman_install "mesa $PACKAGES_DRIVER $PACKAGES_DDX $PACKAGES_VULKAN $PACKAGES_HARDWARE_ACCELERATION"
 
     case "$DESKTOP_ENVIRONMENT" in
+        "dotfiles" )
+            desktop_environment_dotfiles
+            ;;
         "gnome" )
             desktop_environment_gnome
-            ;;
-        "kde" )
-            desktop_environment_kde
-            ;;
-        "xfce" )
-            desktop_environment_xfce
-            ;;
-        "mate" )
-            desktop_environment_mate
-            ;;
-        "cinnamon" )
-            desktop_environment_cinnamon
-            ;;
-        "lxde" )
-            desktop_environment_lxde
+            arch-chroot /mnt systemctl set-default graphical.target
             ;;
     esac
+}
 
-    arch-chroot /mnt systemctl set-default graphical.target
+function desktop_environment_dotfiles() {
+    arch-chroot /mnt pacman -S --no-confirm git
+    arch-chroot /mnt git clone "$DOTFILES_INSTALLER"
+    arch-chroot /mnt bash dotfiles-installer/old-install.sh
 }
 
 function desktop_environment_gnome() {
@@ -1359,7 +1355,7 @@ function end() {
                 read -r -s -n 1 -t 1 -p "Rebooting in $i seconds... Press any key to abort."$'\n' KEY
                 if [ $? -eq 0 ]; then
                     echo ""
-                    echo "Restart aborted. You will must do a explicit reboot (./alis-reboot.sh)."
+                    echo "Restart aborted. You will must do a explicit reboot (./install-reboot.sh)."
                     echo ""
                     REBOOT="false"
                     break
@@ -1368,7 +1364,7 @@ function end() {
             set -e
         else
             echo ""
-            echo "Restart aborted. You will must terminate asciinema recording and do a explicit reboot (exit, ./alis-reboot.sh)."
+            echo "Restart aborted. You will must terminate asciinema recording and do a explicit reboot (exit, ./install-reboot.sh)."
             echo ""
             REBOOT="false"
         fi
@@ -1383,11 +1379,11 @@ function end() {
         echo -e "${GREEN}Arch Linux installed successfully"'!'"${NC}"
         if [ "$ASCIINEMA" == "false" ]; then
             echo ""
-            echo "You will must do a explicit reboot (./alis-reboot.sh)."
+            echo "You will must do a explicit reboot (./install-reboot.sh)."
             echo ""
         else
             echo ""
-            echo "You will must terminate asciinema recording and do a explicit reboot (exit, ./alis-reboot.sh)."
+            echo "You will must terminate asciinema recording and do a explicit reboot (exit, ./install-reboot.sh)."
             echo ""
         fi
     fi
