@@ -18,20 +18,8 @@ set -e
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-# This script is hosted at https://github.com/picodotdev/alis. For new features,
-# improvements and bugs fill an issue in GitHub or make a pull request.
-# Pull Request are welcome!
-#
-# If you test it in real hardware please send me an email to pico.dev@gmail.com with
-# the machine description and tell me if somethig goes wrong or all works fine.
-#
-# Please, don't ask for support for this script in Arch Linux forums, first read
-# the Arch Linux wiki [1], the Installation Guide [2] and the General
-# Recomendations [3], later compare the commands with those of this script.
-
 # Usage:
-# # loadkeys es
-# # curl https://raw.githubusercontent.com/picodotdev/alis/master/download.sh | bash, or with URL shortener curl -sL https://bit.ly/2F3CATp | bash
+# # loadkeys en
 # # vim alis.conf
 # # ./alis.sh
 
