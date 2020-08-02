@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-# Arch Linux Install Script installs unattended, automated and customized Arch Linux system.
-
+# Arch Linux Install Script installs a customized Arch Linux system.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
