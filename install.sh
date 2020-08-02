@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-# Arch Linux Install Script (alis) installs unattended, automated and customized Arch Linux system.
+# Arch Linux Install Script installs a customized Arch Linux system.
 
 
 # This program is free software: you can redistribute it and/or modify
@@ -19,8 +19,8 @@ set -e
 
 # Usage:
 # # loadkeys en
-# # vim alis.conf
-# # ./alis.sh
+# # vim install.conf
+# # ./install.sh
 
 # global variables (no configuration, don't edit)
 ASCIINEMA=""
