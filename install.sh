@@ -1244,7 +1244,7 @@ function desktop_environment() {
 }
 
 function desktop_environment_dotfiles() {
-    arch-chroot /mnt pacman -S --no-confirm git
+    arch-chroot /mnt pacman -S --noconfirm git
     arch-chroot /mnt git clone "$DOTFILES_INSTALLER"
     arch-chroot /mnt bash dotfiles-installer/old-install.sh
 }
@@ -1252,31 +1252,6 @@ function desktop_environment_dotfiles() {
 function desktop_environment_gnome() {
     pacman_install "gnome gnome-extra"
     arch-chroot /mnt systemctl enable gdm.service
-}
-
-function desktop_environment_kde() {
-    pacman_install "plasma-meta plasma-wayland-session kde-applications-meta"
-    arch-chroot /mnt systemctl enable sddm.service
-}
-
-function desktop_environment_xfce() {
-    pacman_install "xfce4 xfce4-goodies lightdm lightdm-gtk-greeter xorg-server"
-    arch-chroot /mnt systemctl enable lightdm.service
-}
-
-function desktop_environment_mate() {
-    pacman_install "mate mate-extra lightdm lightdm-gtk-greeter xorg-server"
-    arch-chroot /mnt systemctl enable lightdm.service
-}
-
-function desktop_environment_cinnamon() {
-    pacman_install "cinnamon lightdm lightdm-gtk-greeter xorg-server"
-    arch-chroot /mnt systemctl enable lightdm.service
-}
-
-function desktop_environment_lxde() {
-    pacman_install "lxde lxdm"
-    arch-chroot /mnt systemctl enable lxdm.service
 }
 
 function packages() {
