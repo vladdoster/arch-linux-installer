@@ -4,5 +4,5 @@ humanfriendly==8.2
 msgpack==1.0.0
 parso==0.7.0
 pythondialog==3.5.1
-Werkzeug==1.0.1
+Werkzeug==2.2.3
 tzlocal
